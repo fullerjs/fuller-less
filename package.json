@@ -2,7 +2,7 @@
 	"name": "fuller-less",
 	"version": "0.0.1",
 	"description": "Fuller plugin: Lesscss building",
-	"keywords": ["js", "fuller", "less", "automation"],
+	"keywords": ["js", "fuller", "build", "less", "automation"],
 	"author": "Alexey Novikov (http://2dubs.com)",
 	"preferGlobal": true,
 	"private": false,
@@ -15,7 +15,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git@github.com:velocityzen/fuller.git"
+		"url": "git@github.com:fullerjs/fuller-less.git"
 	},
 	"main": ".index"
 }

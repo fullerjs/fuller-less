@@ -10,7 +10,7 @@ var dependencies = {};
 var verbose;
 var fileTools;
 
-var Less = function(fuller, opts) {
+var Less = function(fuller, plan) {
 	if(!verbose) {
 		verbose = fuller.verbose;
 	}
@@ -19,7 +19,7 @@ var Less = function(fuller, opts) {
 		fileTools = fuller.getTool('files');
 	}
 
-	this.tree = opts.plan;
+	this.tree = plan.files;
 	this.compress = !fuller.o.dev;
 
 	this.src = path.join(fuller.home, fuller.o.src, 'less');
