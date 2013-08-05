@@ -19,15 +19,15 @@ var Less = function(fuller, plan) {
 		fileTools = fuller.getTool('files');
 	}
 
-	this.tree = plan.files;
+	this.tasks = plan.tasks;
 	this.compress = !fuller.o.dev;
 
-	this.src = path.join(fuller.home, fuller.o.src, 'less');
-	this.dst = path.join(fuller.home, fuller.o.dst);
+	this.src = fuller.pathes.src;
+	this.dst = fuller.pathes.dst;
 };
 
 Less.prototype.buildDependenciesOne = function(cssFile, cb) {
-	var lessFile = path.join(this.src, this.tree[cssFile]);
+	var lessFile = path.join(this.src, this.tasks[cssFile]);
 	var parser = new lesscss.Parser({
 		paths: [this.src],
 		optimization: 0
@@ -59,7 +59,7 @@ Less.prototype.buildDependencies = function(cb) {
 		};
 	};
 
-	for(floor in this.tree) {
+	for(floor in this.tasks) {
 		queue[floor] = build(floor);
 	}
 
@@ -91,7 +91,7 @@ Less.prototype.buildOneTask = function(floor, bricks, cbEach) {
 Less.prototype.buildOne = function(src, dst, cb) {
 	var self = this;
 	var parser = new lesscss.Parser({
-		paths: [this.src],
+		paths: [path.dirname(src)],
 		optimization: 0
 	});
 
@@ -107,8 +107,8 @@ Less.prototype.buildOne = function(src, dst, cb) {
 Less.prototype.build = function(cbEach, cbDone) {
 	var queue = {}, floor;
 
-	for(floor in this.tree) {
-		queue[floor] = this.buildOneTask(floor, this.tree[floor], cbEach);
+	for(floor in this.tasks) {
+		queue[floor] = this.buildOneTask(floor, this.tasks[floor], cbEach);
 	}
 
 	async.series(queue, function(err, result) {
@@ -132,7 +132,7 @@ Less.prototype.watch = function(cb) {
 				verbose.log("Changed ".red, filename);
 
 				for(f in filesToBuild) {
-					queue[f] = self.buildOneTask(filesToBuild[f], self.tree[filesToBuild[f]]);
+					queue[f] = self.buildOneTask(filesToBuild[f], self.tasks[filesToBuild[f]]);
 				}
 
 				async.series(queue, cb);

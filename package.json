@@ -1,6 +1,7 @@
 {
 	"name": "fuller-less",
 	"version": "0.0.1",
+	"license" : "BSD",
 	"description": "Fuller plugin: Lesscss building",
 	"keywords": ["js", "fuller", "build", "less", "automation"],
 	"author": "Alexey Novikov (http://2dubs.com)",
