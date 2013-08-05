@@ -29,7 +29,7 @@ var Less = function(fuller, plan) {
 Less.prototype.buildDependenciesOne = function(cssFile, cb) {
 	var lessFile = path.join(this.src, this.tasks[cssFile]);
 	var parser = new lesscss.Parser({
-		paths: [this.src],
+		paths: [path.dirname(lessFile)],
 		optimization: 0
 	});
 
@@ -125,7 +125,7 @@ Less.prototype.watch = function(cb) {
 		},
 
 		function(result, cb) {
-			fileTools.watchFiles( self.src, dependencies, function(event, filename){
+			fileTools.watchFiles( self.src, dependencies, function(filename){
 				var f, filesToBuild = dependencies[filename];
 				var queue = {};
 
