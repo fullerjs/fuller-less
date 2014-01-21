@@ -20,7 +20,7 @@ var Less = function(fuller, plan) {
 	}
 
 	this.tasks = plan.tasks;
-	this.compress = !fuller.o.dev;
+	this.compress = !fuller.options.dev;
 
 	this.src = fuller.pathes.src;
 	this.dst = fuller.pathes.dst;
