@@ -20,10 +20,10 @@ var Less = function(fuller, plan) {
 	}
 
 	this.tasks = plan.tasks;
-	this.compress = !fuller.options.dev;
+	this.compress = !plan.defaults.dev;
 
-	this.src = fuller.pathes.src;
-	this.dst = fuller.pathes.dst;
+	this.src = plan.defaults.src;
+	this.dst = plan.defaults.dst;
 };
 
 Less.prototype.buildDependenciesOne = function(cssFile, cb) {

@@ -1,6 +1,6 @@
 {
 	"name": "fuller-less",
-	"version": "0.0.2",
+	"version": "0.2.0",
 	"license" : "BSD",
 	"description": "Fuller tool: lesscss building",
 	"keywords": ["js", "fuller", "build", "less", "automation"],
