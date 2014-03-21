@@ -1,146 +1,57 @@
 "use strict";
 var fs = require('fs');
 var path = require('path');
-var async = require('async');
 var lesscss = require('less');
 
 var FILE_ENCODING = 'utf-8';
 
-var dependencies = {};
-var verbose;
-var fileTools;
+var Less = function(fuller, options) {
+	fuller.bind(this);
 
-var Less = function(fuller, plan) {
-	if(!verbose) {
-		verbose = fuller.verbose;
-	}
-
-	if(!fileTools) {
-		fileTools = fuller.getTool('files');
-	}
-
-	this.tasks = plan.tasks;
-	this.compress = !plan.defaults.dev;
-
-	this.src = plan.defaults.src;
-	this.dst = plan.defaults.dst;
+	this.Stream = fuller.streams.Capacitor;
+	this.compress = !options.dev;
+	this.src = options.src;
+	this.dst = options.dst;
+	this.watch = options.watch;
 };
 
-Less.prototype.buildDependenciesOne = function(cssFile, cb) {
-	var lessFile = path.join(this.src, this.tasks[cssFile]);
+Less.prototype.addDependencies = function(importFiles, master) {
+	for(var f in importFiles) {
+		this.addDependence(f, master);
+	}
+};
+
+Less.prototype.compile = function(lessString, master, cb) {
+	var self = this;
 	var parser = new lesscss.Parser({
-		paths: [path.dirname(lessFile)],
-		optimization: 0
+		paths: [this.src]
 	});
 
-	parser.parse(fs.readFileSync(lessFile, FILE_ENCODING), function (err, tree) {
+	parser.parse(lessString, function (err, tree) {
 		if (err) {
-			cb && cb(err);
+			cb(err);
 		} else {
-			var f, importFiles = parser.imports.files;
-
-			fileTools.addDependence(dependencies, lessFile, cssFile);
-
-			for(f in importFiles) {
-				fileTools.addDependence(dependencies, f, cssFile);
+			if(self.watch) {
+				self.addDependencies(parser.imports.files, master);
 			}
-
-			cb && cb(null, 'ok');
+			cb(null, tree.toCSS({compress: self.compress}) );
 		}
 	});
 };
 
-Less.prototype.buildDependencies = function(cb) {
-	var self = this, queue = {}, floor;
+Less.prototype.build = function(stream, master) {
+	var self = this,
+		next = new this.Stream(true, function(result, cb) {
+			self.compile(result, master, cb);
+		});
 
-	var build = function(src) {
-		return function(cb) {
-				self.buildDependenciesOne(src, cb);
-		};
-	};
-
-	for(floor in this.tasks) {
-		queue[floor] = build(floor);
+	if(typeof stream === "string") {
+		var src = path.join(this.src, stream);
+		this.addDependence(src, master);
+		return fs.createReadStream(src, {encoding: FILE_ENCODING}).pipe(next);
+	} else {
+		return stream.pipe(next);
 	}
-
-	async.series(queue, function(err, result) {
-		if(err) {
-			cb && cb(err);
-		} else {
-			cb && cb(null, result);
-		}
-
-	});
-};
-
-Less.prototype.buildOneTask = function(floor, bricks, cbEach) {
-	var self = this;
-	return function(cb) {
-			verbose.log("Building".green, path.join(self.dst, floor));
-			self.buildOne(
-				path.join(self.src, bricks),
-				path.join(self.dst, floor),
-				function(err, dst) {
-					cb(err, dst);
-					cbEach && cbEach(err, dst);
-				}
-			);
-	};
-};
-
-Less.prototype.buildOne = function(src, dst, cb) {
-	var self = this;
-	var parser = new lesscss.Parser({
-		paths: [path.dirname(src)],
-		optimization: 0
-	});
-
-	parser.parse(fs.readFileSync(src, FILE_ENCODING), function (err, tree) {
-		if (err) {
-			cb && cb(err);
-		} else {
-			fileTools.writeForce(dst, tree.toCSS({compress: self.compress}), cb);
-		}
-	});
-};
-
-Less.prototype.build = function(cbEach, cbDone) {
-	var queue = {}, floor;
-
-	for(floor in this.tasks) {
-		queue[floor] = this.buildOneTask(floor, this.tasks[floor], cbEach);
-	}
-
-	async.series(queue, function(err, result) {
-		cbDone && cbDone(err, result);
-	});
-};
-
-Less.prototype.watch = function(cb) {
-	var self = this;
-
-	async.waterfall([
-		function(cb) {
-			self.buildDependencies(cb);
-		},
-
-		function(result, cb) {
-			fileTools.watchFiles( self.src, dependencies, function(filename){
-				var f, filesToBuild = dependencies[filename];
-				var queue = {};
-
-				verbose.log("Changed ".red, filename);
-
-				for(f in filesToBuild) {
-					queue[f] = self.buildOneTask(filesToBuild[f], self.tasks[filesToBuild[f]]);
-				}
-
-				async.series(queue, cb);
-
-			});
-		}
-	], cb);
-
 };
 
 

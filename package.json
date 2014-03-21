@@ -1,6 +1,6 @@
 {
 	"name": "fuller-less",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"license" : "BSD",
 	"description": "Fuller tool: lesscss building",
 	"keywords": ["js", "fuller", "build", "less", "automation"],
@@ -8,8 +8,7 @@
 	"preferGlobal": true,
 	"private": false,
 	"dependencies": {
-		"async":	"0.2.7",
-		"less": 	"~1.6.0"
+		"less": 	"~1.7.0"
 	},
 	"engines": {
 		"node": "~0.10.0"
