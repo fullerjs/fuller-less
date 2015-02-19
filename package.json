@@ -8,7 +8,7 @@
 	"preferGlobal": true,
 	"private": false,
 	"dependencies": {
-		"less": 	"~1.7.0"
+		"less": 	"~2.3.0"
 	},
 	"engines": {
 		"node": "~0.10.0"
