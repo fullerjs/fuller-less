@@ -1,9 +1,9 @@
 "use strict";
-var fs = require('fs');
-var path = require('path');
-var lesscss = require('less');
+var fs = require("fs");
+var path = require("path");
+var less = require("less");
 
-var FILE_ENCODING = 'utf-8';
+var FILE_ENCODING = "utf-8";
 
 var Less = function(fuller, options) {
 	fuller.bind(this);
@@ -15,26 +15,21 @@ var Less = function(fuller, options) {
 	this.watch = options.watch;
 };
 
-Less.prototype.addDependencies = function(importFiles, master) {
-	for(var f in importFiles) {
-		this.addDependence(f, master);
-	}
-};
-
 Less.prototype.compile = function(lessString, master, cb) {
 	var self = this;
-	var parser = new lesscss.Parser({
-		paths: [this.src]
-	});
 
-	parser.parse(lessString, function (err, tree) {
+	less.render(lessString, {
+		paths: [this.src],
+		compress: this.compress
+	}, function(err, output) {
 		if (err) {
+			console.log(err);
 			cb(err);
 		} else {
 			if(self.watch) {
-				self.addDependencies(parser.imports.files, master);
+				self.addDependencies(output.imports, master);
 			}
-			cb(null, tree.toCSS({compress: self.compress}) );
+			cb(null, output.css);
 		}
 	});
 };
