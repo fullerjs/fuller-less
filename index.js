@@ -30,9 +30,9 @@ Less.prototype.compile = function(lessString, master, cb) {
 				column: err.column,
 				extract: err.extract.join("\n")
 			});
-			cb(err);
+			cb();
 		} else {
-			if(self.watch) {
+			if (self.watch) {
 				self.addDependencies(output.imports, master);
 			}
 			cb(null, output.css);
