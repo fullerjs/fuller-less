@@ -23,7 +23,13 @@ Less.prototype.compile = function(lessString, master, cb) {
 		compress: this.compress
 	}, function(err, output) {
 		if (err) {
-			console.log(err);
+			self.error({
+				message: err.message,
+				file: err.filename === "input" ? master : err.filename,
+				line: err.line,
+				column: err.column,
+				extract: err.extract.join("\n")
+			});
 			cb(err);
 		} else {
 			if(self.watch) {
