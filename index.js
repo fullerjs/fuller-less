@@ -1,22 +1,17 @@
 "use strict";
-var fs = require("fs");
-var path = require("path");
-var less = require("less");
+let less = require("less");
+let through2 = require("through2");
 
-var FILE_ENCODING = "utf-8";
-
-var Less = function(fuller, options) {
+let Less = function(fuller, options) {
 	fuller.bind(this);
 
-	this.Stream = fuller.streams.Capacitor;
 	this.compress = !options.dev;
 	this.src = options.src;
-	this.dst = options.dst;
 	this.watch = options.watch;
 };
 
 Less.prototype.compile = function(lessString, master, cb) {
-	var self = this;
+	let self = this;
 
 	less.render(lessString, {
 		paths: [this.src],
@@ -41,18 +36,22 @@ Less.prototype.compile = function(lessString, master, cb) {
 };
 
 Less.prototype.build = function(stream, master) {
-	var self = this,
-		next = new this.Stream(true, function(result, cb) {
-			self.compile(result, master, cb);
-		});
+	let self = this,
+		buffer = [];
 
-	if(typeof stream === "string") {
-		var src = path.join(this.src, stream);
-		this.addDependence(src, master);
-		return fs.createReadStream(src, {encoding: FILE_ENCODING}).pipe(next);
-	} else {
-		return stream.pipe(next);
-	}
+	return stream.pipe( through2(
+		function(chunk, enc, cb) {
+			buffer.push(chunk);
+			cb();
+		},
+		function(cb) {
+			let that = this;
+			self.compile(buffer.join(""), master, function(err, result) {
+				!err && that.push(result);
+				cb();
+			});
+		}
+	));
 };
 
 

@@ -1,6 +1,5 @@
-# Fuller #
+# Less css tool for Fuller #
 **Build everything with right tool**
+[For more info about fuller](https://github.com/fullerjs/fuller)
 
-[For more info about go there](https://github.com/fullerjs/fuller)
-
-## Less css building tool for Mr. Fuller ##
+*In fuller's dev mode (-z option) output uncompressed css.*
