@@ -1,58 +1,25 @@
 "use strict";
 let less = require("less");
-let through2 = require("through2");
 
-let Less = function(fuller, options) {
-	fuller.bind(this);
-
-	this.compress = !options.dev;
-	this.src = options.src;
-	this.watch = options.watch;
-};
-
-Less.prototype.compile = function(lessString, master, cb) {
-	let self = this;
-
-	less.render(lessString, {
-		paths: [this.src],
-		compress: this.compress
-	}, function(err, output) {
-		if (err) {
-			self.error({
-				message: err.message,
-				file: err.filename === "input" ? master : err.filename,
-				line: err.line,
-				column: err.column,
-				extract: err.extract.join("\n")
-			});
-			cb();
-		} else {
-			if (self.watch) {
-				self.addDependencies(output.imports, master);
+module.exports = function(f, mat, options, next) {
+	mat.getContent(function(content) {
+		less.render(content.toString(), {
+			paths: [mat.src.dirname],
+			compress: !options.dev
+		}, function(err, output) {
+			let path = mat.dst().path;
+			if(err) {
+				next({
+					message: err.message,
+					file: err.filename === "input" ? path : err.filename,
+					line: err.line,
+					column: err.column,
+					extract: err.extract.join("\n")
+				});
+			} else {
+				f.addDependencies(output.imports, mat.id);
+				next(null, mat.setContent(output.css));
 			}
-			cb(null, output.css);
-		}
+		});
 	});
 };
-
-Less.prototype.build = function(stream, master) {
-	let self = this,
-		buffer = [];
-
-	return stream.pipe( through2(
-		function(chunk, enc, cb) {
-			buffer.push(chunk);
-			cb();
-		},
-		function(cb) {
-			let that = this;
-			self.compile(buffer.join(""), master, function(err, result) {
-				!err && that.push(result);
-				cb();
-			});
-		}
-	));
-};
-
-
-module.exports = Less;

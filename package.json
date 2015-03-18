@@ -15,8 +15,7 @@
 	"preferGlobal": true,
 	"private": false,
 	"dependencies": {
-		"less": "~2.4.0",
-		"through2": "^0.6.3"
+		"less": "^2.4.0"
 	},
 	"engines": {
 		"node": "~0.12.0",
@@ -24,7 +23,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git@github.com:fullerjs/fuller-less.git"
+		"url": "git@github.com:fullerjs/less.git"
 	},
 	"main": ".index"
 }
