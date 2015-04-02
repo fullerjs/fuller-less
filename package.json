@@ -12,8 +12,6 @@
 		"automation"
 	],
 	"author": "Alexey Novikov (http://2dubs.com)",
-	"preferGlobal": true,
-	"private": false,
 	"dependencies": {
 		"less": "^2.4.0"
 	},
