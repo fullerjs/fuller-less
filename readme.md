@@ -4,3 +4,6 @@
 [For more info about fuller](https://github.com/fullerjs/fuller)
 
 *In fuller's dev mode (-z option) output uncompressed css.*
+
+© velocityzen
+License MIT.
