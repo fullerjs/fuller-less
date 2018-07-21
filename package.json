@@ -13,7 +13,7 @@
 	],
 	"author": "Alexey Novikov (http://2dubs.com)",
 	"dependencies": {
-		"less": "^2.4.0"
+		"less": "^3.0.0"
 	},
 	"repository": {
 		"type": "git",
