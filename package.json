@@ -1,23 +1,23 @@
 {
-	"name": "fuller-less",
-	"version": "0.3.1",
-	"license": "MIT",
-	"description": "Fuller tool: less css building",
-	"keywords": [
-		"js",
-		"fuller",
-		"build",
-		"less",
-		"css",
-		"automation"
-	],
-	"author": "Alexey Novikov (http://2dubs.com)",
-	"dependencies": {
-		"less": "^3.0.0"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git@github.com:fullerjs/less.git"
-	},
-	"main": ".index"
+  "name": "fuller-less",
+  "version": "0.3.1",
+  "license": "MIT",
+  "description": "Fuller tool: less css building",
+  "keywords": [
+    "js",
+    "fuller",
+    "build",
+    "less",
+    "css",
+    "automation"
+  ],
+  "author": "Alexey Novikov (http://2dubs.com)",
+  "dependencies": {
+    "less": "^3.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:fullerjs/less.git"
+  },
+  "main": ".index"
 }
