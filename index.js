@@ -5,7 +5,7 @@ module.exports = function(f, mat, options, next) {
   mat.getContent(content => {
     less.render(content.toString(), {
       paths: [ mat.src.dirname ],
-      compress: !options.dev
+      compress: !options.compress
     }, (err, output) => {
       if (err) {
         next({
